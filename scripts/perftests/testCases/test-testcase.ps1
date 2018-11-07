@@ -15,4 +15,8 @@ Param(
     $repoUrl = "https://github.com/OrchardCMS/OrchardCore.git"
     $testCaseName = GenerateNameFromGitUrl $repoUrl
     $resultsFilePath = [System.IO.Path]::Combine($resultsDirectoryPath, "$testCaseName.csv")
-    RunPerformanceTestsOnGitRepository -nugetClient $nugetClient -sourceRootDirectory $sourceRootDirectory -testCaseName $testCaseName -repoUrl $repoUrl -commitHash "991ff7b536811c8ff2c603e30d754b858d009fa2" -resultsFilePath $resultsFilePath -logsPath $logsPath -skipColdRestores -skipForceRestores -skipNoOpRestores
+    
+    $solutionFilePath = SetupGitRepository -repository $repoUrl -commitHash $commitHash -sourceDirectoryPath  $([System.IO.Path]::Combine($sourceRootDirectory, $testCaseName))
+
+    SetupNuGetFolders $nugetClient
+    . "$PSScriptRoot\RunPerformanceTests.ps1" $nugetClient $solutionFilePath $resultsFilePath $logsPath -skipColdRestores -skipForceRestores -skipNoOpRestores -iterationCount 10

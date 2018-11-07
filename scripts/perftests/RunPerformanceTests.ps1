@@ -6,7 +6,7 @@ Param(
     [Parameter(Mandatory=$true)]
     [string]$resultsFilePath,
     [string]$logsPath,
-    [int]$iterationCount = 3,
+    [int]$iterationCount = 1,
     [switch]$skipWarmup,
     [switch]$skipCleanRestores,
     [switch]$skipColdRestores,

@@ -1,0 +1,6 @@
+clientName,clientVersion,testCaseId,name,totalTime,force,globalPackagesFolderNupkgCount,globalPackagesFolderNupkgSize,globalPackagesFolderFilesCount,globalPackagesFolderFilesSize,cleanGlobalPackagesFolder,httpCacheFileCount,httpCacheFilesSize,cleanHttpCache,pluginsCacheFileCount,pluginsCacheFilesSize,cleanPluginsCache,killMsBuildAndDotnetExeProcesses,processorName,cores,logicalCores
+NuGet.exe,4.9.0.45115,6-6-18-4:6:1,warmup,00:01:28.0874792,True,683,258.322279,26450,1585.682518,True,1125,258.600643,True,0,,True,True,Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz,4,8
+NuGet.exe,4.9.0.45115,6-6-18-4:6:1,arctic,00:01:12.6274643,True,683,258.322279,26450,1585.682518,True,1124,258.581741,True,0,,True,True,Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz,4,8
+NuGet.exe,4.9.0.45115,6-6-18-4:6:1,cold,00:01:02.5361480,True,683,258.322279,26450,1585.682518,True,1124,258.581741,False,0,,False,True,Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz,4,8
+NuGet.exe,4.9.0.45115,6-6-18-4:6:1,force,00:00:15.5257072,True,683,258.322279,26450,1585.682518,False,1124,258.581741,False,0,,False,False,Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz,4,8
+NuGet.exe,4.9.0.45115,6-6-18-4:6:1,noop,00:00:14.3979905,False,683,258.322279,26450,1585.682518,False,1124,258.581741,False,0,,False,False,Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz,4,8
