@@ -6,7 +6,9 @@ Param(
     [Parameter(Mandatory=$true)]
     [string]$resultsDirectoryPath,
     [Parameter(Mandatory=$true)]
-    [string]$logsPath
+    [string]$logsPath,
+    [Parameter(Mandatory=$false)]
+    [string]$testNamePrefix
 )
 
 
@@ -18,5 +20,7 @@ Param(
     
     $solutionFilePath = SetupGitRepository -repository $repoUrl -commitHash $commitHash -sourceDirectoryPath  $([System.IO.Path]::Combine($sourceRootDirectory, $testCaseName))
 
+    $name = $testNamePrefix + $testCaseName
+
     SetupNuGetFolders $nugetClient
-    . "$PSScriptRoot\..\RunPerformanceTests.ps1" $nugetClient $solutionFilePath $resultsFilePath $logsPath -skipColdRestores -skipForceRestores -skipNoOpRestores -iterationCount 100
+    . "$PSScriptRoot\..\RunPerformanceTests.ps1" $nugetClient $solutionFilePath $resultsFilePath $logsPath $name -skipColdRestores -skipForceRestores -skipNoOpRestores -iterationCount 1000

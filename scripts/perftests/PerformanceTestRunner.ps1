@@ -4,6 +4,7 @@ Param(
     [string[]]$nugetClients,
     [string]$testDirectoryPath,
     [string]$logsDirectoryPath,
+    [string]$testNamePrefix,
     [switch]$SkipCleanup
 )
 
@@ -45,7 +46,7 @@ Param(
                     $testCase = $_
                     try 
                     {
-                    . $_ -nugetClient $nugetClient -sourceRootDirectory $([System.IO.Path]::Combine($testDirectoryPath, "source")) -resultsDirectoryPath $resultsDirectoryPath -logsPath $([System.IO.Path]::Combine($testDirectoryPath, "logs")) 
+                    . $_ -nugetClient $nugetClient -sourceRootDirectory $([System.IO.Path]::Combine($testDirectoryPath, "source")) -resultsDirectoryPath $resultsDirectoryPath -logsPath $([System.IO.Path]::Combine($testDirectoryPath, "logs")) -testNamePrefix $testNamePrefix
                     } 
                     catch 
                     {
