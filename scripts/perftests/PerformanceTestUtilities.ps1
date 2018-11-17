@@ -191,3 +191,17 @@
         SetupNuGetFolders $nugetClient
         . "$PSScriptRoot\RunPerformanceTests.ps1" $nugetClient $solutionFilePath $resultsFilePath $logsPath
     }
+
+    function DownloadPackage([string] $packageURL)
+   {
+    
+        $currentFolder = Get-Location
+        Log "Here"
+        $fileName = (New-Guid).ToString() + ".nupkg"
+        Log "Here"
+        $outFileFullPath =  [System.IO.Path]::Combine($currentFolder, $fileName)
+        Log "Download out file $outFileFullPath"
+        # Invoke-WebRequest $packageURL -OutFile $outFileFullPath -PassThru
+        $WebClient = New-Object System.Net.WebClient
+        $WebClient.DownloadFile($packageURL,$outFileFullPath)
+    }

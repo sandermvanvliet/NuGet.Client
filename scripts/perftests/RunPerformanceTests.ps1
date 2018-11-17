@@ -5,6 +5,8 @@ Param(
     [string]$solutionPath,
     [Parameter(Mandatory=$true)]
     [string]$resultsFilePath,
+    [Parameter(Mandatory=$false)]
+    [string]$packageDownloadPath = "",
     [string]$logsPath,
     [string]$testName,
     [int]$iterationCount = 1,
@@ -14,11 +16,17 @@ Param(
     [switch]$skipForceRestores,
     [switch]$skipNoOpRestores
 )
+
+# Warmup does:          RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "warmup" $uniqueRunID $testName -cleanGlobalPackagesFolder -cleanHttpCache -cleanPluginsCache -killMSBuildAndDotnetExeProcess -force   
+# CleanRestores does:   RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "arctic" $uniqueRunID $testName -cleanGlobalPackagesFolder -cleanHttpCache -cleanPluginsCache -killMSBuildAndDotnetExeProcess -force
+# ColdRestores does:    RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "cold" $uniqueRunID $testName -cleanGlobalPackagesFolder -killMSBuildAndDotnetExeProcess -force
+# ForceRestores does:   RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "force" $uniqueRunID $testName -force
+
     . "$PSScriptRoot\PerformanceTestUtilities.ps1"
 
     # Plugins cache is only available in 4.8+. We need to be careful when using that switch for older clients because it may blow up.
     # The logs location is optional
-    function RunRestore([string]$solutionFilePath, [string]$nugetClient, [string]$resultsFile, [string]$logsPath, [string]$restoreName, [string]$testCaseId, [string]$testName,
+    function RunRestore([string]$solutionFilePath, [string]$nugetClient, [string]$resultsFile, [string]$packageDownloadPath, [string]$logsPath, [string]$restoreName, [string]$testCaseId, [string]$testName,
             [switch]$cleanGlobalPackagesFolder, [switch]$cleanHttpCache, [switch]$cleanPluginsCache, [switch]$killMsBuildAndDotnetExeProcesses, [switch]$force)
     {
         Log "Running $nugetClient restore with cleanGlobalPackagesFolder:$cleanGlobalPackagesFolder cleanHttpCache:$cleanHttpCache cleanPluginsCache:$cleanPluginsCache killMsBuildAndDotnetExeProcesses:$killMsBuildAndDotnetExeProcesses force:$force"
@@ -69,10 +77,26 @@ Param(
         }
         else 
         {
+            # Log " !!!!!!!!!!!!!  $forceArg !!!!!!!!!!!!" "magenta"
             $logs = . $nugetClient restore $solutionFilePath -noninteractive $forceArg
         }
         $end=Get-Date
         $totalTime=$end-$start
+
+       
+        #default to 0
+        $totalTimeDownload = $start - $start;
+        Log " Download path $packageDownloadPath" "magenta"
+        if(![string]::IsNullOrEmpty($packageDownloadPath))
+        {
+            
+            $start=Get-Date
+            Log " Download path $packageDownloadPath" "magenta"
+            DownloadPackage $packageDownloadPath
+            $end=Get-Date
+            $totalTimeDownload=$end-$start
+        }
+        
 
         if(![string]::IsNullOrEmpty($logsPath))
         {
@@ -125,10 +149,10 @@ Param(
 
         if(!(Test-Path $resultsFile))
         {
-            OutFileWithCreateFolders $resultsFile "time,clientName,clientVersion,testCaseId,name,testName,totalTime,totalTimeMilli,force,globalPackagesFolderNupkgCount,globalPackagesFolderNupkgSize,globalPackagesFolderFilesCount,globalPackagesFolderFilesSize,cleanGlobalPackagesFolder,httpCacheFileCount,httpCacheFilesSize,cleanHttpCache,pluginsCacheFileCount,pluginsCacheFilesSize,cleanPluginsCache,killMsBuildAndDotnetExeProcesses,processorName,cores,logicalCores"
+            OutFileWithCreateFolders $resultsFile "time,clientName,clientVersion,testCaseId,name,testName,totalTime,totalTimeMilli,totalTimeDownloadMilli,force,globalPackagesFolderNupkgCount,globalPackagesFolderNupkgSize,globalPackagesFolderFilesCount,globalPackagesFolderFilesSize,cleanGlobalPackagesFolder,httpCacheFileCount,httpCacheFilesSize,cleanHttpCache,pluginsCacheFileCount,pluginsCacheFilesSize,cleanPluginsCache,killMsBuildAndDotnetExeProcesses,processorName,cores,logicalCores"
         }
 
-        Add-Content -Path $resultsFile -Value "$($end.ToString()),$clientName,$clientVersion,$testCaseId,$restoreName,$testName,$($totalTime.ToString()),$($totalTime.TotalMilliseconds),$force,$($globalPackagesFolderNupkgFiles.Count),$globalPackagesFolderNupkgsSize,$($globalPackagesFolderFiles.Count),$globalPackagesFolderFilesSize,$cleanGlobalPackagesFolder,$($httpCacheFiles.Count),$httpCacheFilesSize,$cleanHttpCache,$($pluginsCacheFiles.Count),$pluginsCacheFilesSize,$cleanPluginsCache,$killMsBuildAndDotnetExeProcesses,$processorName,$cores,$logicalCores"
+        Add-Content -Path $resultsFile -Value "$($end.ToString()),$clientName,$clientVersion,$testCaseId,$restoreName,$testName,$($totalTime.ToString()),$($totalTime.TotalMilliseconds),$($totalTimeDownload.TotalMilliseconds),$force,$($globalPackagesFolderNupkgFiles.Count),$globalPackagesFolderNupkgsSize,$($globalPackagesFolderFiles.Count),$globalPackagesFolderFilesSize,$cleanGlobalPackagesFolder,$($httpCacheFiles.Count),$httpCacheFilesSize,$cleanHttpCache,$($pluginsCacheFiles.Count),$pluginsCacheFilesSize,$cleanPluginsCache,$killMsBuildAndDotnetExeProcesses,$processorName,$cores,$logicalCores"
 
         Log "Finished measuring."
     }
@@ -178,26 +202,26 @@ Param(
         if(!$skipWarmup)
         {
             Log "Running 1x warmup restore"
-            RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "warmup" $uniqueRunID $testName -cleanGlobalPackagesFolder -cleanHttpCache -cleanPluginsCache -killMSBuildAndDotnetExeProcess -force
+            RunRestore $solutionPath $nugetClientPath $resultsFilePath $packageDownloadPath $logsPath "warmup" $uniqueRunID $testName -cleanGlobalPackagesFolder -cleanHttpCache -cleanPluginsCache -killMSBuildAndDotnetExeProcess -force
         }
         if(!$skipCleanRestores)
         {
             Log "Running $($iterationCount)x clean restores"
-            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "arctic" $uniqueRunID $testName -cleanGlobalPackagesFolder -cleanHttpCache -cleanPluginsCache -killMSBuildAndDotnetExeProcess -force }
+            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $packageDownloadPath $logsPath "arctic" $uniqueRunID $testName -cleanGlobalPackagesFolder -cleanHttpCache -cleanPluginsCache -killMSBuildAndDotnetExeProcess -force }
         }
         if(!$skipColdRestores)
         {
             Log "Running $($iterationCount)x without a global packages folder"
-            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "cold" $uniqueRunID $testName -cleanGlobalPackagesFolder -killMSBuildAndDotnetExeProcess -force }
+            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $packageDownloadPath $logsPath "cold" $uniqueRunID $testName -cleanGlobalPackagesFolder -killMSBuildAndDotnetExeProcess -force }
         }
         if(!$skipForceRestores)
         {
             Log "Running $($iterationCount)x force restores"
-            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "force" $uniqueRunID $testName -force }
+            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $packageDownloadPath $logsPath "force" $uniqueRunID $testName -force }
         }
         if(!$skipNoOpRestores){
             Log "Running $($iterationCount)x no-op restores"
-            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $logsPath "noop" $uniqueRunID $testName }
+            1..$iterationCount | % { RunRestore $solutionPath $nugetClientPath $resultsFilePath $packageDownloadPath $logsPath "noop" $uniqueRunID $testName }
         }
 
         Log "Completed the performance measurements for $solutionPath, results are in $resultsFilePath" "green"

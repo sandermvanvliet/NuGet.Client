@@ -5,6 +5,8 @@ Param(
     [string]$testDirectoryPath,
     [string]$logsDirectoryPath,
     [string]$testNamePrefix,
+    [Parameter(Mandatory = $false)]
+    [int]$iterationCount = 2,
     [switch]$SkipCleanup
 )
 
@@ -46,7 +48,7 @@ Param(
                     $testCase = $_
                     try 
                     {
-                    . $_ -nugetClient $nugetClient -sourceRootDirectory $([System.IO.Path]::Combine($testDirectoryPath, "source")) -resultsDirectoryPath $resultsDirectoryPath -logsPath $([System.IO.Path]::Combine($testDirectoryPath, "logs")) -testNamePrefix $testNamePrefix
+                    . $_ -nugetClient $nugetClient -sourceRootDirectory $([System.IO.Path]::Combine($testDirectoryPath, "source")) -resultsDirectoryPath $resultsDirectoryPath -logsPath $([System.IO.Path]::Combine($testDirectoryPath, "logs")) -testNamePrefix $testNamePrefix -iterationCount $iterationCount
                     } 
                     catch 
                     {
