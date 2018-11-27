@@ -18,7 +18,8 @@ Param(
     
     $repoUrl = "https://github.com/cristinamanum/PerfTest.git"
     $testCaseName = GenerateNameFromGitUrl $repoUrl
-    $resultsFilePath = [System.IO.Path]::Combine($resultsDirectoryPath, "$testCaseName.csv")
+    
+    $resultsFilePath = [System.IO.Path]::Combine($resultsDirectoryPath, "Restore$testCaseName.csv")
     
     $solutionFilePath = SetupGitRepository -repository $repoUrl -commitHash $commitHash -sourceDirectoryPath  $([System.IO.Path]::Combine($sourceRootDirectory, $testCaseName))
 

@@ -196,9 +196,7 @@
    {
     
         $currentFolder = Get-Location
-        Log "Here"
         $fileName = (New-Guid).ToString() + ".nupkg"
-        Log "Here"
         $outFileFullPath =  [System.IO.Path]::Combine($currentFolder, $fileName)
         Log "Download out file $outFileFullPath"
         # Invoke-WebRequest $packageURL -OutFile $outFileFullPath -PassThru

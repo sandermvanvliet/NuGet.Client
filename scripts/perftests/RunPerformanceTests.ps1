@@ -149,10 +149,10 @@ Param(
 
         if(!(Test-Path $resultsFile))
         {
-            OutFileWithCreateFolders $resultsFile "time,clientName,clientVersion,testCaseId,name,testName,totalTime,totalTimeMilli,totalTimeDownloadMilli,force,globalPackagesFolderNupkgCount,globalPackagesFolderNupkgSize,globalPackagesFolderFilesCount,globalPackagesFolderFilesSize,cleanGlobalPackagesFolder,httpCacheFileCount,httpCacheFilesSize,cleanHttpCache,pluginsCacheFileCount,pluginsCacheFilesSize,cleanPluginsCache,killMsBuildAndDotnetExeProcesses,processorName,cores,logicalCores"
+            OutFileWithCreateFolders $resultsFile "time,clientName,clientVersion,testCaseId,name,testName,totalTime,totalTimeMilli,totalTimeDownloadMilli,force,globalPackagesFolderNupkgCount,globalPackagesFolderNupkgSize,globalPackagesFolderFilesCount,globalPackagesFolderFilesSize,cleanGlobalPackagesFolder,httpCacheFileCount,httpCacheFilesSize,cleanHttpCache,pluginsCacheFileCount,pluginsCacheFilesSize,cleanPluginsCache,killMsBuildAndDotnetExeProcesses,processorName,cores,logicalCores,machineName"
         }
 
-        Add-Content -Path $resultsFile -Value "$($end.ToString()),$clientName,$clientVersion,$testCaseId,$restoreName,$testName,$($totalTime.ToString()),$($totalTime.TotalMilliseconds),$($totalTimeDownload.TotalMilliseconds),$force,$($globalPackagesFolderNupkgFiles.Count),$globalPackagesFolderNupkgsSize,$($globalPackagesFolderFiles.Count),$globalPackagesFolderFilesSize,$cleanGlobalPackagesFolder,$($httpCacheFiles.Count),$httpCacheFilesSize,$cleanHttpCache,$($pluginsCacheFiles.Count),$pluginsCacheFilesSize,$cleanPluginsCache,$killMsBuildAndDotnetExeProcesses,$processorName,$cores,$logicalCores"
+        Add-Content -Path $resultsFile -Value "$($end.ToString()),$clientName,$clientVersion,$testCaseId,$restoreName,$testName,$($totalTime.ToString()),$($totalTime.TotalMilliseconds),$($totalTimeDownload.TotalMilliseconds),$force,$($globalPackagesFolderNupkgFiles.Count),$globalPackagesFolderNupkgsSize,$($globalPackagesFolderFiles.Count),$globalPackagesFolderFilesSize,$cleanGlobalPackagesFolder,$($httpCacheFiles.Count),$httpCacheFilesSize,$cleanHttpCache,$($pluginsCacheFiles.Count),$pluginsCacheFilesSize,$cleanPluginsCache,$killMsBuildAndDotnetExeProcesses,$processorName,$cores,$logicalCores, $env:computername"
 
         Log "Finished measuring."
     }
