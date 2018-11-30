@@ -25,6 +25,8 @@ Param(
 
     Log "Clients: $nugetClients" "green"
 
+    Log "Iteration Count $iterationCount" "green"
+
     try 
     {
         foreach($nugetClient in $nugetClients)

@@ -159,6 +159,7 @@ Param(
 
     try {
         ##### Script logic #####
+        Log "Iteration Count $iterationCount" "green"
 
         if(!(Test-Path $solutionPath))
         {
