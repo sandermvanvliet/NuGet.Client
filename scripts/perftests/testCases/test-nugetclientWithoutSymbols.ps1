@@ -23,7 +23,7 @@ Param(
     
     $solutionFilePath = SetupGitRepository -repository $repoUrl -commitHash $commitHash -sourceDirectoryPath  $([System.IO.Path]::Combine($sourceRootDirectory, $testCaseName))
 
-    $name = "Symbols_NuGetClient"
+    $name = "WithoutSymbols_NuGetClient"
     # it will be downloaded multiple packages  
     $packageDownloadPath = ""
     # run only clean restore
