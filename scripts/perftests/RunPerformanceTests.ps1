@@ -31,6 +31,17 @@ Param(
     {
         Log "Running $nugetClient restore with cleanGlobalPackagesFolder:$cleanGlobalPackagesFolder cleanHttpCache:$cleanHttpCache cleanPluginsCache:$cleanPluginsCache killMsBuildAndDotnetExeProcesses:$killMsBuildAndDotnetExeProcesses force:$force"
 
+       Log "Solution path is $solutionFilePath"
+
+	#clean up the packages folder if exists in the same sirectory with the solution 
+	$packagesFolder = [System.IO.Path]::Combine((Get-Item $solutionFilePath).DirectoryName, "packages")
+ 	if(Test-Path $packagesFolder)
+        {
+	    Log "Packages folder found. Removing" "yellow"		
+	    Remove-Item [System.IO.Path]::Combine((Get-Item $solutionFilePath).DirectoryName, "packages") -Force -Recurse
+	}
+        Log "Debug 1"
+
         # Do the required cleanup if necesarry
         if($cleanGlobalPackagesFolder -Or $cleanHttpCache -Or $cleanPluginsCache)
         {
@@ -77,8 +88,14 @@ Param(
         }
         else 
         {
-            # Log " !!!!!!!!!!!!!  $forceArg !!!!!!!!!!!!" "magenta"
-            $logs = . $nugetClient restore $solutionFilePath -noninteractive $forceArg
+	    if((Get-Item $solutionFilePath).Name -eq "packages.config")
+	    {
+		$logs = . $nugetClient restore $solutionFilePath -noninteractive -SolutionDirectory (Get-Item $solutionFilePath).DirectoryName $forceArg 
+	    }
+            else
+	    {
+            	$logs = . $nugetClient restore $solutionFilePath -noninteractive $forceArg
+	    }
         }
         $end=Get-Date
         $totalTime=$end-$start

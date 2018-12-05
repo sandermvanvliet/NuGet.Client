@@ -110,7 +110,7 @@
         return $solutionFile;
     }
 
-    # Given a repository and a hash, checks out the revision in the given source directory. The return is a solution file if found. 
+   # Given a repository and a hash, checks out the revision in the given source directory. The return is a solution file if found. 
     function SetupGitRepository([string]$repository, [string]$commitHash, [string]$sourceDirectoryPath)
     {
         Log "Setting up $repository into $sourceDirectoryPath"
@@ -118,6 +118,35 @@
         $solutionFile = GetSolutionFile $repository $sourceDirectoryPath
         Log "Completed the repository setup. The solution file is $solutionFile" -color "Green"
         return $solutionFile
+    }
+
+
+    # Find the appropriate package config file for the repository. 
+    # Looks for a packages.config file in the root folder 
+    function GetPackagesConfigFile([string]$repository,[string]$sourceDirectoryPath) {
+
+        $gitRepoName = $repository.Substring($($repository.LastIndexOf('/') + 1))
+        $packagesConfigFile = [System.IO.Path]::Combine($sourceDirectoryPath, "packages.config")
+
+        if(Test-Path $packagesConfigFile)
+        {
+            Log "Config file found $packagesConfigFile" "green"
+        } 
+        else 
+        {
+           Log "No packages config file found in $sourceDirectoryPath" "red"
+        }
+        return $packagesConfigFile;
+    }
+
+    # Given a repository and a hash, checks out the revision in the given source directory. The return is the package Config file if found. 
+    function SetupGitRepositoryWithPackagesConfig([string]$repository, [string]$commitHash, [string]$sourceDirectoryPath)
+    {
+        Log "Setting up $repository into $sourceDirectoryPath"
+        DownloadRepository $repository $commitHash $sourceDirectoryPath
+        $packageConfigFile = GetPackagesConfigFile $repository $sourceDirectoryPath
+        Log "Completed the repository setup. The package config file is $packageConfigFile" -color "Green"
+        return $packageConfigFile
     }
 
     # runs locals clear all with the given client
