@@ -38,7 +38,7 @@ Param(
  	if(Test-Path $packagesFolder)
         {
 	    Log "Packages folder found. Removing" "yellow"		
-	    Remove-Item [System.IO.Path]::Combine((Get-Item $solutionFilePath).DirectoryName, "packages") -Force -Recurse
+	    Remove-Item $packagesFolder -Force -Recurse
 	}
         Log "Debug 1"
 
