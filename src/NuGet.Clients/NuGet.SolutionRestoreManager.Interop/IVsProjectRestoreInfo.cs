@@ -29,6 +29,8 @@ namespace NuGet.SolutionRestoreManager
         /// </summary>
         IVsReferenceItems ToolReferences { get; }
 
+        // New references need to be added here.
+
         /// <summary>
         /// Original raw value of TargetFrameworks property as set in a project file.
         /// </summary>

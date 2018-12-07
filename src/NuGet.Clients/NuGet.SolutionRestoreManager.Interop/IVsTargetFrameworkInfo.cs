@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -26,12 +26,12 @@ namespace NuGet.SolutionRestoreManager
         /// <summary>
         /// Collection of package references.
         /// </summary>
-        IVsReferenceItems PackageReferences { get; }
+        IVsReferenceItems PackageReferences { get; } // This one and 
 
         /// <summary>
         /// Collection of project level properties evaluated per each Target Framework,
         /// e.g. PackageTargetFallback.
         /// </summary>
-        IVsProjectProperties Properties { get; }
+        IVsProjectProperties Properties { get; } // this one are the ones that are relevant.
     }
 }
