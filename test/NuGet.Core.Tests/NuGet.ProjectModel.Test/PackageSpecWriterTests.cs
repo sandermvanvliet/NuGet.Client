@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -12,7 +11,6 @@ using NuGet.LibraryModel;
 using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
-using Test.Utility;
 using Xunit;
 
 namespace NuGet.ProjectModel.Test
@@ -78,24 +76,15 @@ namespace NuGet.ProjectModel.Test
   ],
   ""copyright"": ""2016"",
   ""language"": ""en-US"",
-  ""packInclude"": {
-    ""file"": ""file.txt""
-  },
-  ""packOptions"": {
-    ""owners"": [
-      ""owner1"",
-      ""owner2""
-    ],
-    ""tags"": [
-      ""tag1"",
-      ""tag2""
-    ],
-    ""projectUrl"": ""http://my.url.com"",
-    ""iconUrl"": ""http://my.url.com"",
-    ""summary"": ""Sum"",
-    ""releaseNotes"": ""release noted"",
-    ""licenseUrl"": ""http://my.url.com""
-  },
+  ""tags"": [
+    ""tag1"",
+    ""tag2""
+  ],
+  ""projectUrl"": ""http://my.url.com"",
+  ""iconUrl"": ""http://my.url.com"",
+  ""summary"": ""Sum"",
+  ""releaseNotes"": ""release noted"",
+  ""licenseUrl"": ""http://my.url.com"",
   ""scripts"": {
     ""script1"": [
       ""script.js""
@@ -111,37 +100,6 @@ namespace NuGet.ProjectModel.Test
     ""net46"": {}
   }
 }";
-            // Act & Assert
-            VerifyJsonPackageSpecRoundTrip(json);
-        }
-
-        [Fact]
-        public void Write_ReadWriteSinglePackageType()
-        {
-            // Arrange
-            var json = @"{
-  ""packOptions"": {
-    ""packageType"": ""DotNetTool""
-  }
-}";
-
-            // Act & Assert
-            VerifyJsonPackageSpecRoundTrip(json);
-        }
-
-        [Fact]
-        public void Write_ReadWriteMultiplePackageType()
-        {
-            // Arrange
-            var json = @"{
-  ""packOptions"": {
-    ""packageType"": [
-      ""Dependency"",
-      ""DotNetTool""
-    ]
-  }
-}";
-
             // Act & Assert
             VerifyJsonPackageSpecRoundTrip(json);
         }
@@ -509,16 +467,6 @@ namespace NuGet.ProjectModel.Test
                 LicenseUrl = "licenseUrl",
                 Name = "name",
                 Owners = unsortedArray,
-                PackOptions = new PackOptions()
-                {
-                    IncludeExcludeFiles = new IncludeExcludeFiles()
-                    {
-                        Exclude = unsortedReadOnlyList,
-                        ExcludeFiles = unsortedReadOnlyList,
-                        Include = unsortedReadOnlyList,
-                        IncludeFiles = unsortedReadOnlyList
-                    }
-                },
                 ProjectUrl = "projectUrl",
                 ReleaseNotes = "releaseNotes",
                 RequireLicenseAcceptance = true,
@@ -560,10 +508,6 @@ namespace NuGet.ProjectModel.Test
             {
                 packageSpec.RestoreMetadata.ProjectWideWarningProperties = warningProperties;
             }
-
-            packageSpec.PackInclude.Add("b", "d");
-            packageSpec.PackInclude.Add("a", "e");
-            packageSpec.PackInclude.Add("c", "f");
 
             var runtimeDependencySet = new RuntimeDependencySet("id", new[]
             {
